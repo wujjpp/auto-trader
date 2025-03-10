@@ -16,6 +16,7 @@ import libs.logger as logger
 
 app_logger = logger.get_app_logger()
 
+
 class Quote:
     _instance: Optional["Quote"] = None
     lock = threading.Lock()
@@ -40,9 +41,11 @@ class Quote:
             strategy.buy(quote)
 
     def start(self):
-        xtdata.subscribe_whole_quote(
-            self.context.get_candidate_stock_codes(), callback=self.on_data
-        )
+        stock_codes = self.context.get_candidate_stock_codes()
+        if len(stock_codes) > 0:
+            xtdata.subscribe_whole_quote(stock_codes, callback=self.on_data)
+        else:
+            app_logger.warning(f"未能在csv文件中找到候选标的")
 
     @classmethod
     def get_instance(cls) -> "Quote":
