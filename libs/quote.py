@@ -1,6 +1,11 @@
 """
 Created by 满仓干 on - 2025/03/10.
-使用本程序造成的投资上(不仅限于)的任何损失与程序作者无任何关系，同意才能使用
+"""
+
+"""
+免责声明: 
+本程序仅供学习交流使用，在实盘使用本程序造成的投资上(不仅限于)的任何损失与程序作者无任何关系, 同意才能使用
+运行本程序即同意上述免责声明 
 """
 
 import datetime
@@ -52,6 +57,9 @@ class Quote:
 
     @classmethod
     def get_instance(cls) -> "Quote":
+        if cls._instance != None:
+            return cls._instance
+
         with cls.lock:
             if not cls._instance:
                 cls._instance = Quote()

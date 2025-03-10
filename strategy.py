@@ -1,7 +1,13 @@
 """
 Created by 满仓干 on - 2025/03/10.
-使用本程序造成的投资上(不仅限于)的任何损失与程序作者无任何关系，同意才能使用
 """
+
+"""
+免责声明: 
+本程序仅供学习交流使用，在实盘使用本程序造成的投资上(不仅限于)的任何损失与程序作者无任何关系, 同意才能使用
+运行本程序即同意上述免责声明 
+"""
+
 
 import traceback
 from typing import Optional
@@ -41,23 +47,27 @@ def buy(quote: Optional[QuoteOnline]) -> None:
         # detailed_info实际上就是csv文件里面对应stock的那行数据
         detailed_info = context.get_stock_detail_info(stock_code)
         if detailed_info == None:
-            print(chalk.red(f"{stock_code} 无法在csv文件中获取标的信息")) # 一般不会发生，毕竟订阅是从这个文件来的，考虑到强壮性，还是加个判断
+            print(
+                chalk.red(f"{stock_code} 无法在csv文件中获取标的信息")
+            )  # 一般不会发生，毕竟订阅是从这个文件来的，考虑到强壮性，还是加个判断
             return
 
         # 价格是涨停价并且卖一的量是0，视为涨停，你也可以加入其它条件，如：封单金额等
         # 涨停幅度可根据 stock_code前缀自行判断
-        if (round(price, 2)) >= round(last_close * (1 + 0.1), 2) and quote.ask_vol1 == 0:
+        if (round(price, 2)) >= round(
+            last_close * (1 + 0.1), 2
+        ) and quote.ask_vol1 == 0:
 
             ###########################################################################################################
             #                        定制条件从这里开始 - 你的策略逻辑应该都写在这里                                         #
             ###########################################################################################################
-            
+
             # 例如:
             #   1. 可以看一下stocks.csv里面的有个栏位叫`5涨`, 那么我们就可以增加一个“5日涨幅大于30%终止打板”的条件
             if detailed_info.get("5涨") > 30:  # type: ignore
                 print(chalk.red(f"{stock_code} 5日涨幅大于30%, 终止打板"))
                 return
-            
+
             #   2. 例如：增加一个封单金额条件必须大于1000万才进行打板
             if quote.bid1 * quote.bid_vol1 < 10000000.0:
                 print(chalk.red(f"{stock_code} 封单金额小于1000万，终止打板"))

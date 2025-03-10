@@ -1,5 +1,7 @@
 # Auto trader for Mini QMT
 
+功能说明: 本程序在用户选定的股票池中，利用Mini QMT推送数据，实时监控股价，在股票上板的一瞬间，进行排单。
+
 ## 1. 安装python
 
 下载地址: <https://www.python.org/downloads/>
@@ -20,9 +22,20 @@
 
 记得登录界面，勾选 "独立交易", 登录QMT
 
+## 5. 修改配置文件 `config.py`
+
+```py
+# QMT安装路径 - 根据实际情况自行修改
+QMT_PATH = "C:\\gj_trader\\userdata_mini"
+# 资金账号 - 根据实际情况自行修改
+QMT_ACCOUNT_ID = "XXXXXXX"
+# 这个不要修改，固定是STOCK
+QMT_ACCOUNT_TYPE = "STOCK"
+```
+
 ## 6. 运行auto-trader
 
-在运行打板程序之前，先把候选标的维护到`stocks.csv`文件中, 栏位 `证券代码` 是必须的
+在运行打板程序之前，先把`候选标的`维护到`stocks.csv`文件中, 栏位 `证券代码` 是必须要有的
 
 ```csv
 证券代码,证券名称,5涨,10涨,20涨,30涨,45涨,60涨

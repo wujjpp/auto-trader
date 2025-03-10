@@ -1,6 +1,11 @@
 """
 Created by 满仓干 on - 2025/03/10.
-使用本程序造成的投资上(不仅限于)的任何损失与程序作者无任何关系，同意才能使用
+"""
+
+"""
+免责声明: 
+本程序仅供学习交流使用，在实盘使用本程序造成的投资上(不仅限于)的任何损失与程序作者无任何关系, 同意才能使用
+运行本程序即同意上述免责声明 
 """
 
 import threading
@@ -211,7 +216,7 @@ class Trader:
             r = shared.xtobject_to_dict(self.xt_trader.query_stock_asset(account))
             r["account_type_name"] = shared.decode_account_type(r["account_type"])
             return AccountAsset.load_from_dict(r)
-        
+
     def query_stock_trades(self):
         """
         查询资金账号对应的当日所有成交
@@ -295,6 +300,9 @@ class Trader:
 
     @classmethod
     def get_instance(cls) -> "Trader":
+        if cls._instance != None:
+            return cls._instance
+
         with cls.lock:
             if not cls._instance:
                 cls._instance = Trader()
