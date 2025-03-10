@@ -202,7 +202,9 @@ class Trader:
                             "报价方式",
                             "成交价",
                             "成交量",
+                            "状态",
                             "下单时间",
+                           
                         ]
                     )
                     for order in context.orders:
@@ -216,6 +218,7 @@ class Trader:
                                 order.price_type_name,
                                 order.traded_price,
                                 order.traded_volume,
+                                order.order_status_name,
                                 datetime.datetime.fromtimestamp(
                                     order.order_time
                                 ).strftime("%Y-%m-%d %H:%M:%S"),

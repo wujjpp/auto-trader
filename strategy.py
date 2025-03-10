@@ -39,6 +39,8 @@ def buy(quote: Optional[QuoteOnline]) -> None:
     # 价格是涨停价并且卖一的量是0，视为涨停，你也可以加入其它条件，如：封单金额等
     # 涨停幅度可根据 stock_code前缀自行判断
     if (round(price, 2)) >= round(last_close * (1 + 0.1), 2) and quote.ask_vol1 == 0:
+
+
         ################################# 您的自定义条件从这里开始 #################################
         # 例如:
         #   1. 可以看一下stocks.csv里面的`5涨`, 大于30%终止打板
@@ -50,7 +52,8 @@ def buy(quote: Optional[QuoteOnline]) -> None:
 
         ##################################### 自定义条件结束 #####################################
 
-        # 看一下账户余额，是不是能购买
+
+        # 看一下账户余额，是不是资金充足
         account_info = trader.query_asset()
         if account_info == None:
             app_logger.error("无法获取账户信息")
@@ -65,6 +68,7 @@ def buy(quote: Optional[QuoteOnline]) -> None:
                 f"终止买入{stock_code}, 账户余额不足, 需要资金: {price * size}"
             )
             account_info.print()
+            return
 
         # 执行买入操作
         order_id = trader.buy(stock_code, size, price, 11, "打板", "打板")
