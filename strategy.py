@@ -55,7 +55,7 @@ def buy(quote: Optional[QuoteOnline]) -> None:
         # 价格是涨停价并且卖一的量是0，视为涨停，你也可以加入其它条件，如：封单金额等
         # 涨停幅度可根据 stock_code前缀自行判断
         if (round(price, 2)) >= round(
-            last_close * (1 + 0.1), 2
+            last_close * (1 + utils.get_rise_limit_by_stock_code(stock_code)), 2
         ) and quote.ask_vol1 == 0:
 
             ###########################################################################################################

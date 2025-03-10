@@ -172,3 +172,17 @@ def print_quote(quote: Optional[QuoteOnline]) -> None:
             f" {chalk.yellow(quote.stock_code)} - {chalk.yellow(quote.datetime)}"
         )
         print(table.table)
+
+def get_rise_limit_by_stock_code(stock_code: str) -> float:
+    """
+    根据标的代码获取涨幅限制
+    """
+    if stock_code.startswith('60'): # 上证主板
+        return 0.1
+    if stock_code.startswith('68'): # 上证科创板
+        return 0.2
+    if stock_code.startswith('00'): # 深证主板
+        return 0.1
+    if stock_code.startswith('30'): # 深证创业板
+        return 0.2
+    return 0.1
