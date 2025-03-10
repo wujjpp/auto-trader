@@ -1,11 +1,12 @@
 # Auto trader for Mini QMT
 
-## 1. 安装python 
+## 1. 安装python
 
-下载地址: https://www.python.org/downloads/
+下载地址: <https://www.python.org/downloads/>
 
 ## 2. 下载
-下载地址: https://dict.thinktrader.net/packages/xtquant_240613.rar
+
+下载地址: <https://dict.thinktrader.net/packages/xtquant_240613.rar>
 
 ## 3. 安装xtquant
 
@@ -28,6 +29,5 @@
 ## 6. 策略定制
 
 打开 `strategy.py`, 在 buy 函数里面添加 你自己的逻辑
-
 
 Made with ♥ by 满仓干
