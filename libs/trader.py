@@ -4,6 +4,7 @@ Created by 满仓干 on - 2025/03/10.
 
 import threading
 import time
+from typing import Optional
 
 from xtquant.xttrader import XtQuantTrader, XtQuantTraderCallback
 from xtquant.xttype import StockAccount
@@ -65,6 +66,7 @@ class TraderCallback(XtQuantTraderCallback):
         print(f"\n------------------ on_stock_order ------------------")
         trade_logger.info(f"{shared.json_dumps(order)}")
         print(f"----------------------------------------------------\n")
+        Context.get_instance().orders.append(order)  # type: ignore
 
     def on_stock_trade(self, trade):
         # 1. prepare data
@@ -76,6 +78,7 @@ class TraderCallback(XtQuantTraderCallback):
         print(f"\n------------------ on_stock_trade ------------------")
         trade_logger.info(f"{shared.json_dumps(trade)}")
         print(f"----------------------------------------------------\n")
+        Context.get_instance().trades.append(trade)  # type: ignore
 
     def on_stock_position(self, position):
         # 1. prepare data
@@ -119,7 +122,11 @@ class TraderCallback(XtQuantTraderCallback):
         trade_logger.info(f"{shared.json_dumps(r)}")
         print(f"--------------------------------------------------\n")
 
+
 class Trader:
+    _instance: Optional["Trader"] = None
+    lock = threading.Lock()
+
     def __init__(self):
         self.context = Context.get_instance()
         self.path = config.QMT_PATH
@@ -158,8 +165,8 @@ class Trader:
 
             if self.connected:
                 account_id = config.QMT_ACCOUNT_ID
-                account_type =config.QMT_ACCOUNT_TYPE
-                account = StockAccount(account_id=account_id, account_type=account_type) # type: ignore
+                account_type = config.QMT_ACCOUNT_TYPE
+                account = StockAccount(account_id=account_id, account_type=account_type)  # type: ignore
                 # 对交易回调进行订阅，订阅后可以收到交易主推，返回0表示订阅成功
                 subscribe_result = self.xt_trader.subscribe(account)
                 if subscribe_result == 0:
@@ -215,24 +222,24 @@ class Trader:
         order_remark: str = "",
     ):
         """
-        `买入`: 系统生成的订单编号，成功委托后的订单编号为大于0的正整数，如果为-1表示委托失败 
+        `买入`: 系统生成的订单编号，成功委托后的订单编号为大于0的正整数，如果为-1表示委托失败
 
-        `stock_code`: 股票代码 
+        `stock_code`: 股票代码
 
         `stock_volume`: 买入股数 - 注意: 不是手数
 
-        `price`: 买入价格 
-        
-        `price_type`: 价格类型， 5: 现价, 11: 限价 
-        
-        `strategy_name`: 策略名称 
-        
+        `price`: 买入价格
+
+        `price_type`: 价格类型， 5: 现价, 11: 限价
+
+        `strategy_name`: 策略名称
+
         `order_remark`: 委托单备注
         """
         self._check_status()
 
         with self.locker:
-            account: StockAccount = self.account # type: ignore
+            account: StockAccount = self.account  # type: ignore
 
             r = self.xt_trader.order_stock(
                 account,
@@ -272,3 +279,10 @@ class Trader:
             orders = self.xt_trader.query_stock_orders(account, cancelable_only)
             orders = shared.xtlist_to_list(orders)
             return [shared.patch_xtorder(order) for order in orders]
+
+    @classmethod
+    def get_instance(cls) -> "Trader":
+        with cls.lock:
+            if not cls._instance:
+                cls._instance = Trader()
+            return cls._instance

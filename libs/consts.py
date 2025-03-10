@@ -2,7 +2,6 @@
 Created by 满仓干 on - 2025/03/10.
 """
 
-
 BROKER_PRICE_ANY = 49  # 市价
 BROKER_PRICE_LIMIT = 50  # 限价
 BROKER_PRICE_BEST = 51  # 最优价
@@ -44,9 +43,15 @@ BROKER_PRICE_RETAIL_LIMIT = 94  # 港股通零股限价
 BROKER_PRICE_PROP_INCREASE_SHARE = "j"  # 增发
 BROKER_PRICE_PROP_COLLATERAL_TRANSFER = 107  # 担保品划转
 BROKER_PRICE_PROP_NEEQ_PRICING = "w"  # 定价（全国股转 - 挂牌公司交易 - 协议转让）
-BROKER_PRICE_PROP_NEEQ_MATCH_CONFIRM = "x"  # 成交确认（全国股转 - 挂牌公司交易 - 协议转让）
-BROKER_PRICE_PROP_NEEQ_MUTUAL_MATCH_CONFIRM = "y"  # 互报成交确认（全国股转 - 挂牌公司交易 - 协议转让）
-BROKER_PRICE_PROP_NEEQ_LIMIT = "z"  # 限价（用于挂牌公司交易 - 做市转让 - 限价买卖和两网及退市交易-限价买卖）
+BROKER_PRICE_PROP_NEEQ_MATCH_CONFIRM = (
+    "x"  # 成交确认（全国股转 - 挂牌公司交易 - 协议转让）
+)
+BROKER_PRICE_PROP_NEEQ_MUTUAL_MATCH_CONFIRM = (
+    "y"  # 互报成交确认（全国股转 - 挂牌公司交易 - 协议转让）
+)
+BROKER_PRICE_PROP_NEEQ_LIMIT = (
+    "z"  # 限价（用于挂牌公司交易 - 做市转让 - 限价买卖和两网及退市交易-限价买卖）
+)
 
 
 # 最新价

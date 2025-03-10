@@ -44,6 +44,7 @@ def get_log_file_name(name: str) -> str:
 
     return f"logs/{prefix}/{name}.log"
 
+
 def get_app_logger() -> logging.Logger:
     """
     获取应用日志
@@ -60,12 +61,18 @@ def get_app_logger() -> logging.Logger:
     console_handler = logging.StreamHandler()
     console_handler.setLevel(logging.INFO)
 
-    file_handler = handlers.RotatingFileHandler(get_log_file_name("app"), maxBytes=1024 * 1024, backupCount=5, encoding="utf-8")
+    file_handler = handlers.RotatingFileHandler(
+        get_log_file_name("app"), maxBytes=1024 * 1024, backupCount=5, encoding="utf-8"
+    )
     file_handler.setLevel(logging.INFO)
 
     # 定义handler的输出格式
-    formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
-    console_handler.setFormatter(ColoredFormatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s"))
+    formatter = logging.Formatter(
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    )
+    console_handler.setFormatter(
+        ColoredFormatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+    )
     file_handler.setFormatter(formatter)
 
     # 给logger添加handler
@@ -93,7 +100,12 @@ def get_account_logger() -> logging.Logger:
     console_handler = logging.StreamHandler()
     console_handler.setLevel(logging.INFO)
 
-    file_handler = handlers.RotatingFileHandler(get_log_file_name("account"), maxBytes=1024 * 1024, backupCount=5, encoding="utf-8")
+    file_handler = handlers.RotatingFileHandler(
+        get_log_file_name("account"),
+        maxBytes=1024 * 1024,
+        backupCount=5,
+        encoding="utf-8",
+    )
     file_handler.setLevel(logging.INFO)
 
     # 定义handler的输出格式
@@ -124,11 +136,19 @@ def get_trade_logger() -> logging.Logger:
     console_handler = logging.StreamHandler()
     console_handler.setLevel(logging.INFO)
 
-    file_handler = handlers.TimedRotatingFileHandler(get_log_file_name("trade"), when="D", interval=1, backupCount=30, encoding="utf-8")
+    file_handler = handlers.TimedRotatingFileHandler(
+        get_log_file_name("trade"),
+        when="D",
+        interval=1,
+        backupCount=30,
+        encoding="utf-8",
+    )
     file_handler.setLevel(logging.INFO)
 
     # 定义handler的输出格式
-    formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+    formatter = logging.Formatter(
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    )
     console_handler.setFormatter(ColoredFormatter("%(message)s"))
     file_handler.setFormatter(formatter)
 
@@ -137,6 +157,7 @@ def get_trade_logger() -> logging.Logger:
     trade_logger.addHandler(file_handler)
 
     return trade_logger
+
 
 def get_error_logger() -> logging.Logger:
     """
@@ -154,12 +175,18 @@ def get_error_logger() -> logging.Logger:
     console_handler = logging.StreamHandler()
     console_handler.setLevel(logging.ERROR)
 
-    file_handler = handlers.RotatingFileHandler(get_log_file_name("error"), maxBytes=1024 * 1024 * 5, encoding="utf-8")
+    file_handler = handlers.RotatingFileHandler(
+        get_log_file_name("error"), maxBytes=1024 * 1024 * 5, encoding="utf-8"
+    )
     file_handler.setLevel(logging.ERROR)
 
     # 定义handler的输出格式
-    formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
-    console_handler.setFormatter(ColoredFormatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s"))
+    formatter = logging.Formatter(
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    )
+    console_handler.setFormatter(
+        ColoredFormatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+    )
     file_handler.setFormatter(formatter)
 
     # 给logger添加handler

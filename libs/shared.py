@@ -10,6 +10,7 @@ import xtquant.xtconstant as xtconstant
 import libs.consts as consts
 import math
 
+
 def json_default(v):
     if isinstance(v, datetime.datetime):
         return v.strftime("%Y-%m-%d %H:%M:%S")  # type: ignore
@@ -38,7 +39,9 @@ def json_parse(s: str) -> dict:
 
 
 def xtobject_to_dict(xtobject) -> dict:
-    prop_names = list(filter(lambda s: not (s.startswith("__") or s.startswith("m_")), dir(xtobject)))
+    prop_names = list(
+        filter(lambda s: not (s.startswith("__") or s.startswith("m_")), dir(xtobject))
+    )
     r = {}
     for name in prop_names:
         r[name] = getattr(xtobject, name)
