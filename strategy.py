@@ -34,6 +34,7 @@ def buy(quote: Optional[QuoteOnline]) -> None:
         return
 
     # 从csv文件里面取配置的信息，你可以在csv里面增加任何你需要的字段，用于下面的辅助判断
+    # detailed_info实际上就是csv文件里面对应stock的那行数据
     detailed_info = context.get_stock_detail_info(stock_code)
 
     # 价格是涨停价并且卖一的量是0，视为涨停，你也可以加入其它条件，如：封单金额等
@@ -43,12 +44,15 @@ def buy(quote: Optional[QuoteOnline]) -> None:
 
         ################################# 您的自定义条件从这里开始 #################################
         # 例如:
-        #   1. 可以看一下stocks.csv里面的`5涨`, 大于30%终止打板
+        #   1. 可以看一下stocks.csv里面的有个栏位叫`5涨`, 那么我们就可以真假一个“5日涨幅大于30%终止打板”的条件
         if detailed_info.get("5涨") > 30:  # type: ignore
             print(chalk.red(f"{stock_code} 5日涨幅大于30%, 终止打板"))
             return
 
-        #   2. 等等条件，你自己看着办
+        #   2. 再举个例子：假设csv里面有个栏位叫`自由流通股本`，
+        #      那么你可以通过 quote.volume * 100 / detailed_info.get("自由流通股本") 计算换手率, 
+        #      通过换手率参数来判断要不要继续打板
+        #      其它条件，自由发挥，只要有数据，一切皆有可能
 
         ##################################### 自定义条件结束 #####################################
 
@@ -59,7 +63,9 @@ def buy(quote: Optional[QuoteOnline]) -> None:
             app_logger.error("无法获取账户信息")
             return
 
-        # 这里写死了一手，你可以在这里通过account_info.cash来计算可买入的手数，比如: 1/4仓，随你怎么玩
+        # 这里写死了一手，你可以在这里通过account_info.cash来计算可买入的手数
+        # 比如: 剩余资金的1/4仓打板，那么: size = int(account_info.cash / 4 / (price * 100)) * 100
+        # 想这么玩，你自己看着办
         size = 100
 
         # 这里是检查账户现金是不是能买入指定size
