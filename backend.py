@@ -32,8 +32,8 @@ def _print_orders_and_trades():
 
 def start() -> None:
     jobstores = {"default": MemoryJobStore()}
-    executors = {"default": ThreadPoolExecutor(20)}
-    job_defaults = {"coalesce": True, "max_instances": 5}
+    executors = {"default": ThreadPoolExecutor(5)}
+    job_defaults = {"coalesce": True, "max_instances": 1}
     scheduler = BlockingScheduler(
         jobstores=jobstores,
         executors=executors,
