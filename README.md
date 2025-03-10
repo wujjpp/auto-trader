@@ -14,7 +14,7 @@
 
 ## 4. 安装其它依赖包
 
-打开windows控制台，输入: pip install pandas terminaltables3 simple_chalk colorama
+打开windows控制台，输入: pip install pandas terminaltables3 simple_chalk colorama apscheduler pytz
 
 ## 5. 运行Mini QMT
 

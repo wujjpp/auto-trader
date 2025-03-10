@@ -13,9 +13,10 @@ from time import sleep
 from xtquant import xtdata
 from libs.quote import Quote
 from libs.trader import Trader
+import backend
+
 
 Trader.get_instance().start()
 sleep(5) # 稍微等一下，只是让日志输出更加有序
 Quote.get_instance().start()
-
-xtdata.run()
+backend.start()

@@ -191,71 +191,8 @@ class Trader:
                     for trade in trades:
                         context.trades.append(Trade.load_from_dict(trade))  # type: ignore
 
-                    table_data = []
-                    table_data.append(
-                        [
-                            "账户",
-                            "证券代码",
-                            "委托单类型",
-                            "委托价",
-                            "委托量",
-                            "报价方式",
-                            "成交价",
-                            "成交量",
-                            "状态",
-                            "下单时间",
-                           
-                        ]
-                    )
-                    for order in context.orders:
-                        table_data.append(
-                            [
-                                order.account_id,
-                                order.stock_code,
-                                chalk.red(order.order_type_name) if order.order_type_name == '股票买入' else (chalk.green(order.order_type_name) if order.order_type_name == '股票卖出' else chalk.blue(order.order_type_name)),
-                                order.price,
-                                order.order_volume,
-                                order.price_type_name,
-                                order.traded_price,
-                                order.traded_volume,
-                                order.order_status_name,
-                                datetime.datetime.fromtimestamp(
-                                    order.order_time
-                                ).strftime("%Y-%m-%d %H:%M:%S"),
-                            ]
-                        )
-                    table = AsciiTable(table_data)
-                    table.title = "委托列表"
-                    print(table.table)
-
-                    table_data = []
-                    table_data.append(
-                        [
-                            "账户",
-                            "证券代码",
-                            "委托单类型",
-                            "成交价",
-                            "成交量",
-                            "成交时间",
-                        ]
-                    )
-
-                    for trade in context.trades:
-                         table_data.append(
-                            [
-                                trade.account_id,
-                                trade.stock_code,
-                                chalk.red(trade.order_type_name) if trade.order_type_name == '股票买入' else (chalk.green(trade.order_type_name) if trade.order_type_name == '股票卖出' else chalk.blue(trade.order_type_name)),
-                                trade.traded_price,
-                                trade.traded_volume,
-                                datetime.datetime.fromtimestamp(
-                                    trade.traded_time
-                                ).strftime("%Y-%m-%d %H:%M:%S"),
-                            ]
-                        )
-                    table = AsciiTable(table_data)
-                    table.title = "成交列表"
-                    print(table.table)
+                    context.print_orders()
+                    context.print_trades()
 
                 else:
                     app_logger.error(f"资金账号 {account_id} 交易回调注册失败")
