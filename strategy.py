@@ -52,10 +52,10 @@ def buy(quote: Optional[QuoteOnline]) -> None:
             )  # 一般不会发生，毕竟订阅是从这个文件来的，考虑到强壮性，还是加个判断
             return
 
-        # 价格是涨停价并且卖一的量是0，视为涨停，你也可以加入其它条件，如：封单金额等
-        # 涨停幅度可根据 stock_code前缀自行判断
+        # 价格是涨停价并且卖一的量是0，视为涨停，你也可以加入其它条件
+        rise_limit = utils.get_rise_limit_by_stock_code(stock_code)
         if (round(price, 2)) >= round(
-            last_close * (1 + utils.get_rise_limit_by_stock_code(stock_code)), 2
+            last_close * (1 + rise_limit), 2
         ) and quote.ask_vol1 == 0:
 
             ###########################################################################################################
@@ -63,8 +63,8 @@ def buy(quote: Optional[QuoteOnline]) -> None:
             ###########################################################################################################
 
             # 例如:
-            #   1. 可以看一下stocks.csv里面的有个栏位叫`5涨`, 那么我们就可以增加一个“5日涨幅大于30%终止打板”的条件
-            if detailed_info.get("5涨") > 30:  # type: ignore
+            #   1. 可以看一下stocks.csv里面的有个栏位叫`5涨`, 那么我们就可以增加一个“5日涨幅大于20%终止打板”的条件
+            if detailed_info.get("5涨") > 20:  # type: ignore
                 print(chalk.red(f"{stock_code} 5日涨幅大于30%, 终止打板"))
                 return
 
