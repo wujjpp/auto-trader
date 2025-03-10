@@ -64,7 +64,7 @@ def buy(quote: Optional[QuoteOnline]) -> None:
             return
 
         # 这里写死了一手，你可以在这里通过account_info.cash来计算可买入的手数
-        # 比如: 剩余资金的1/4仓打板，那么: size = int(account_info.cash / 4 / (price * 100)) * 100
+        # 比如: 剩余资金的 1/4 进行打板，那么: size = int(account_info.cash / 4 / (price * 100)) * 100
         # 想这么玩，你自己看着办
         size = 100
 
