@@ -2,9 +2,12 @@
 Created by 满仓干 on - 2025/03/10.
 """
 
+import datetime
 import threading
 import time
 from typing import Optional
+from simple_chalk import chalk
+from terminaltables3 import AsciiTable
 
 from xtquant.xttrader import XtQuantTrader, XtQuantTraderCallback
 from xtquant.xttype import StockAccount
@@ -14,7 +17,9 @@ import config as config
 from libs.context import Context
 import libs.logger as logger
 from libs.errors import NotConnectError
+from libs.models import AccountAsset, Order, Trade
 import libs.shared as shared
+
 
 app_logger = logger.get_app_logger()
 trade_logger = logger.get_trade_logger()
@@ -131,6 +136,7 @@ class Trader:
         self.context = Context.get_instance()
         self.path = config.QMT_PATH
         self.connected = False
+        self.registed = False
         self.account = None
         self.event_set = threading.Event()
         self.locker = threading.Lock()
@@ -172,6 +178,82 @@ class Trader:
                 if subscribe_result == 0:
                     app_logger.info(f"资金账号 {account_id} 交易回调注册成功")
                     self.account = account
+
+                    context = Context.get_instance()
+                    context.orders = []
+                    context.trades = []
+
+                    orders = self.query_stock_orders()  # type: ignore
+                    for order in orders:
+                        context.orders.append(Order.load_from_dict(order))  # type: ignore
+
+                    trades = self.query_stock_trades()  # type: ignore
+                    for trade in trades:
+                        context.trades.append(Trade.load_from_dict(trade))  # type: ignore
+
+                    table_data = []
+                    table_data.append(
+                        [
+                            "账户",
+                            "证券代码",
+                            "委托单类型",
+                            "委托价",
+                            "委托量",
+                            "报价方式",
+                            "成交价",
+                            "成交量",
+                            "下单时间",
+                        ]
+                    )
+                    for order in context.orders:
+                        table_data.append(
+                            [
+                                order.account_id,
+                                order.stock_code,
+                                chalk.red(order.order_type_name) if order.order_type_name == '股票买入' else (chalk.green(order.order_type_name) if order.order_type_name == '股票卖出' else chalk.blue(order.order_type_name)),
+                                order.price,
+                                order.order_volume,
+                                order.price_type_name,
+                                order.traded_price,
+                                order.traded_volume,
+                                datetime.datetime.fromtimestamp(
+                                    order.order_time
+                                ).strftime("%Y-%m-%d %H:%M:%S"),
+                            ]
+                        )
+                    table = AsciiTable(table_data)
+                    table.title = "委托列表"
+                    print(table.table)
+
+                    table_data = []
+                    table_data.append(
+                        [
+                            "账户",
+                            "证券代码",
+                            "委托单类型",
+                            "成交价",
+                            "成交量",
+                            "成交时间",
+                        ]
+                    )
+
+                    for trade in context.trades:
+                         table_data.append(
+                            [
+                                trade.account_id,
+                                trade.stock_code,
+                                chalk.red(trade.order_type_name) if trade.order_type_name == '股票买入' else (chalk.green(trade.order_type_name) if trade.order_type_name == '股票卖出' else chalk.blue(trade.order_type_name)),
+                                trade.traded_price,
+                                trade.traded_volume,
+                                datetime.datetime.fromtimestamp(
+                                    trade.traded_time
+                                ).strftime("%Y-%m-%d %H:%M:%S"),
+                            ]
+                        )
+                    table = AsciiTable(table_data)
+                    table.title = "成交列表"
+                    print(table.table)
+
                 else:
                     app_logger.error(f"资金账号 {account_id} 交易回调注册失败")
 
@@ -183,24 +265,14 @@ class Trader:
     def stop(self):
         self.event_set.set()
 
+    def is_ready(self):
+        return self.connected and self.account != None
+
     def _check_status(self):
         if not self.connected or not self.account:
             raise NotConnectError()
 
-    def query_account_infos(self):
-        """
-        查询所有资金账户信息
-        """
-        self._check_status()
-
-        with self.locker:
-            r = self.xt_trader.query_account_infos()
-            r = shared.xtlist_to_list(r)
-            for acc in r:
-                acc = shared.patch_xtaccountinfo(acc)
-            return r
-
-    def query_stock_asset(self, account_id: str):
+    def query_asset(self) -> Optional[AccountAsset]:
         """
         查询资金账号对应的资产
         """
@@ -210,7 +282,33 @@ class Trader:
             account = self.account
             r = shared.xtobject_to_dict(self.xt_trader.query_stock_asset(account))
             r["account_type_name"] = shared.decode_account_type(r["account_type"])
-            return r
+            return AccountAsset.load_from_dict(r)
+        
+    def query_stock_trades(self):
+        """
+        查询资金账号对应的当日所有成交
+        """
+        self._check_status()
+
+        with self.locker:
+            account = self.account
+            trades = self.xt_trader.query_stock_trades(account)
+            trades = shared.xtlist_to_list(trades)
+
+            return [shared.patch_xttrade(trade) for trade in trades]
+
+    def query_stock_orders(self, cancelable_only=False):
+        """
+        查询资金账号对应的当日所有委托
+        cancelable_only - bool 仅查询可撤委托
+        """
+        self._check_status()
+
+        with self.locker:
+            account = self.account
+            orders = self.xt_trader.query_stock_orders(account, cancelable_only)
+            orders = shared.xtlist_to_list(orders)
+            return [shared.patch_xtorder(order) for order in orders]
 
     def buy(
         self,
@@ -266,19 +364,6 @@ class Trader:
 
             order = shared.patch_xtorder(order)
             return order
-
-    def query_stock_orders(self, account_id: str, cancelable_only=False):
-        """
-        查询资金账号对应的当日所有委托
-        cancelable_only - bool 仅查询可撤委托
-        """
-        self._check_status()
-
-        with self.locker:
-            account = self.account
-            orders = self.xt_trader.query_stock_orders(account, cancelable_only)
-            orders = shared.xtlist_to_list(orders)
-            return [shared.patch_xtorder(order) for order in orders]
 
     @classmethod
     def get_instance(cls) -> "Trader":

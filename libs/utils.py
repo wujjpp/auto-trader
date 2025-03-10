@@ -6,6 +6,9 @@ from typing import Optional
 from .models import QuoteOnline
 from terminaltables3 import AsciiTable
 from simple_chalk import chalk
+import libs.logger as logger
+
+app_logger = logger.get_app_logger()
 
 
 def get_number_desc(v: float) -> str:
@@ -34,7 +37,7 @@ def print_quote_simple(quote: Optional[QuoteOnline]) -> None:
             round((quote.price - quote.last_close) * 100 / quote.last_close, 2), 0, "%"
         )
         message = f"证券代码: {chalk.blue(quote.stock_code)}, 行情时间: {chalk.yellow(quote.time)}, 现价: {colored_value(quote.price, quote.last_close)}, 涨幅: {s2}, 总量: {chalk.yellow(get_number_desc(round(quote.volume / 100, 0)))}, 总额: {chalk.magenta(get_number_desc(round(quote.amount, 2)))}"
-        print(message)
+        app_logger.info(message)
 
 
 def print_quote(quote: Optional[QuoteOnline]) -> None:

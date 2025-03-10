@@ -5,6 +5,8 @@ Created by 满仓干 on - 2025/03/10.
 import datetime
 import json
 from typing import Dict, Optional
+from terminaltables3 import AsciiTable
+
 
 class QuoteOnline:
     def __init__(self):
@@ -278,7 +280,7 @@ class Order:
             r[attr] = getattr(self, attr)
 
         return json.dumps(r, ensure_ascii=False, indent=2)
-    
+
     @classmethod
     def load_from_dict(cls, data: Dict) -> Optional["Order"]:
         if data != None:
@@ -373,4 +375,49 @@ class Trade:
 
             return o
 
+        return None
+
+
+class TemporaryOrder:
+    def __init__(self, stock_code: str):
+        self.stock_code = stock_code
+        self.order_time = datetime.datetime.now()
+
+
+class AccountAsset:
+    def __init__(self) -> None:
+        self.account_id = ""
+        self.account_type = 2
+        self.cash = 0
+        self.frozen_cash = 0
+        self.market_value = 0
+        self.total_asset = 0
+        self.account_type_name = ""
+
+    def print(self) -> None:
+        table_data = []
+        table_data.append(["账户", self.account_id])
+        table_data.append(["账户类型", self.account_type_name])
+        table_data.append(["现金", self.cash])
+        table_data.append(["冻结资金", self.frozen_cash])
+        table_data.append(["持仓市值", self.market_value])
+        table_data.append(["总资产", self.total_asset])
+        table = AsciiTable(table_data)
+        table.inner_heading_row_border = False
+        table.title = "账户信息"
+        print(table.table)
+
+    @classmethod
+    def load_from_dict(cls, data: Dict) -> Optional["AccountAsset"]:
+        if data != None:
+            acc = AccountAsset()
+            acc.account_id = data.get("account_id")
+            acc.account_type = data.get("account_type")
+            acc.cash = data.get("cash")
+            acc.frozen_cash = data.get("frozen_cash")
+            acc.market_value = data.get("market_value")
+            acc.total_asset = data.get("total_asset")
+            acc.account_type_name = data.get("account_type_name")
+            return acc
+        
         return None
