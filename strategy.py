@@ -41,21 +41,25 @@ def buy(quote: Optional[QuoteOnline]) -> None:
     # 涨停幅度可根据 stock_code前缀自行判断
     if (round(price, 2)) >= round(last_close * (1 + 0.1), 2) and quote.ask_vol1 == 0:
 
-
-        ################################# 您的自定义条件从这里开始 #################################
+        ################################# 定制条件从这里开始 - 你的策略逻辑应该都写在这里 #################################
         # 例如:
-        #   1. 可以看一下stocks.csv里面的有个栏位叫`5涨`, 那么我们就可以真假一个“5日涨幅大于30%终止打板”的条件
+        #   1. 可以看一下stocks.csv里面的有个栏位叫`5涨`, 那么我们就可以增加一个“5日涨幅大于30%终止打板”的条件
         if detailed_info.get("5涨") > 30:  # type: ignore
             print(chalk.red(f"{stock_code} 5日涨幅大于30%, 终止打板"))
             return
+        
+        #   2. 例如：增加一个封单金额条件必须大于1000万才进行打板
+        if quote.bid1 * quote.bid_vol1 < 10000000.0:
+            print(chalk.red(f"{stock_code} 封单金额小于1000万，终止打板"))
+            return
 
-        #   2. 再举个例子：假设csv里面有个栏位叫`自由流通股本`，
-        #      那么你可以通过 quote.volume * 100 / detailed_info.get("自由流通股本") 计算换手率, 
+        #   3. 再举个例子：假设csv里面有个栏位叫`自由流通股本`，
+        #      那么你可以通过 quote.volume * 100 / detailed_info.get("自由流通股本") 计算换手率,
         #      通过换手率参数来判断要不要继续打板
-        #      其它条件，自由发挥，只要有数据，一切皆有可能
 
-        ##################################### 自定义条件结束 #####################################
+        #   4.  等等，你可以写很多条件在这里，自由发挥，只要有数据，一切皆有可能
 
+        ############################################## 定制条件结束 ##############################################
 
         # 看一下账户余额，是不是资金充足
         account_info = trader.query_asset()
@@ -63,15 +67,16 @@ def buy(quote: Optional[QuoteOnline]) -> None:
             app_logger.error("无法获取账户信息")
             return
 
-        # 这里写死了一手，你可以在这里通过account_info.cash来计算可买入的手数
+        # 你可以在这里通过account_info.cash来计算可买入的手数
         # 比如: 剩余资金的 1/4 进行打板，那么: size = int(account_info.cash / 4 / (price * 100)) * 100
         # 想这么玩，你自己看着办
+        # 这里仅仅是用于测试，就写死了一手即100股
         size = 100
 
         # 这里是检查账户现金是不是能买入指定size
         if account_info.cash < price * size:
             app_logger.error(
-                f"终止买入{stock_code}, 账户余额不足, 需要资金: {price * size}"
+                f"终止买入{stock_code}, 账户余额不足, 需要资金: {price * size}, 剩余资金: {account_info.cash}"
             )
             account_info.print()
             return
@@ -81,10 +86,9 @@ def buy(quote: Optional[QuoteOnline]) -> None:
         if order_id != -1:
             message = f"{stock_code} 下单成功，委托价: {price:.2f}, 委托量: {size}, 成本: {price * size}"
             print(chalk.yellow(message))
-            context.set_already_buy(
-                stock_code
-            )  # 这个是用来临时锁定用，防止在委托回调慢的情况下重复下单，有效时长1分钟
+            # 这个是用来临时锁定用，防止在委托回调慢的情况下重复下单，有效时长1分钟
+            context.set_already_buy(stock_code)
         else:
-            app_logger.error(f"{stock_code} 下单失败")
+            app_logger.error(f"{stock_code} 下单失败，QMT返回的委托单号是-1")
     else:
         utils.print_quote_simple(quote)
