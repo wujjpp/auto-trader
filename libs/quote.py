@@ -34,7 +34,7 @@ class Quote:
     def on_data(self, datas):
         now = datetime.datetime.now().strftime("%H:%M:%S")
         # 从09:31:00开始，是为了避免涨停开盘，然后快速下杀的情况
-        # 本来一字板就很难打到，这边就风险管控优先了
+        # 本来一字板就很难打到，这边就风控优先了
         if now <= "09:31:00" or now >= "14:55:00":
             app_logger.info(f"非交易时段, [09:31:00 ~ 14:55:00]")
             return
