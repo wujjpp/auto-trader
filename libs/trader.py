@@ -2,12 +2,9 @@
 Created by 满仓干 on - 2025/03/10.
 """
 
-import datetime
 import threading
 import time
 from typing import Optional
-from simple_chalk import chalk
-from terminaltables3 import AsciiTable
 
 from xtquant.xttrader import XtQuantTrader, XtQuantTraderCallback
 from xtquant.xttype import StockAccount
@@ -46,9 +43,6 @@ class TraderCallback(XtQuantTraderCallback):
 
         # 2. log
         account_logger.info(f"{shared.json_dumps(status)}")
-
-        # 3. save data to db
-        # tradedb.save_account_status(status)
 
     def on_stock_asset(self, asset):
         # 1. prepare data
@@ -119,13 +113,6 @@ class TraderCallback(XtQuantTraderCallback):
         print(f"\n----------------- on_cancel_error -----------------")
         trade_logger.error(f"{shared.json_dumps(cancel_error)}")
         print(f"---------------------------------------------------\n")
-
-    def on_order_stock_async_response(self, response):
-        r = shared.xtobject_to_dict(response)
-        r["event_name"] = "on_order_stock_async_response"
-        print(f"\n-------- on_order_stock_async_response ---------")
-        trade_logger.info(f"{shared.json_dumps(r)}")
-        print(f"--------------------------------------------------\n")
 
 
 class Trader:
