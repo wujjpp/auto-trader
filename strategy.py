@@ -36,11 +36,13 @@ def buy(quote: Optional[QuoteOnline]) -> None:
     # 从csv文件里面取配置的信息，你可以在csv里面增加任何你需要的字段，用于下面的辅助判断
     # detailed_info实际上就是csv文件里面对应stock的那行数据
     detailed_info = context.get_stock_detail_info(stock_code)
+    if detailed_info == None:
+        print(chalk.red(f"{stock_code} 无法在csv文件中获取标的信息")) # 一般不会发生，毕竟订阅是从这个文件来的，考虑到强壮性，还是加个判断
+        return
 
     # 价格是涨停价并且卖一的量是0，视为涨停，你也可以加入其它条件，如：封单金额等
     # 涨停幅度可根据 stock_code前缀自行判断
     if (round(price, 2)) >= round(last_close * (1 + 0.1), 2) and quote.ask_vol1 == 0:
-
         ################################# 定制条件从这里开始 - 你的策略逻辑应该都写在这里 #################################
         # 例如:
         #   1. 可以看一下stocks.csv里面的有个栏位叫`5涨`, 那么我们就可以增加一个“5日涨幅大于30%终止打板”的条件
@@ -68,12 +70,11 @@ def buy(quote: Optional[QuoteOnline]) -> None:
             return
 
         # 你可以在这里通过account_info.cash来计算可买入的手数
-        # 比如: 剩余资金的 1/4 进行打板，那么: size = int(account_info.cash / 4 / (price * 100)) * 100
-        # 想这么玩，你自己看着办
-        # 这里仅仅是用于测试，就写死了一手即100股
+        # 比如: 剩余资金的 1/4 对该标的进行打板，那么: size = int(account_info.cash / 4 / (price * 100)) * 100
+        # 想这么玩，你自己看着办，但这里仅仅是用于测试，就写死了一手即100股
         size = 100
 
-        # 这里是检查账户现金是不是能买入指定size
+        # 检查账户剩余现金在该价格上是不是能买入指定size
         if account_info.cash < price * size:
             app_logger.error(
                 f"终止买入{stock_code}, 账户余额不足, 需要资金: {price * size}, 剩余资金: {account_info.cash}"
@@ -82,7 +83,7 @@ def buy(quote: Optional[QuoteOnline]) -> None:
             return
 
         # 执行买入操作
-        order_id = trader.buy(stock_code, size, price, 11, "打板", "打板")
+        order_id = trader.buy(stock_code, size, price, 11, "打板", detailed_info.get("备注", ""))  # type: ignore
         if order_id != -1:
             message = f"{stock_code} 下单成功，委托价: {price:.2f}, 委托量: {size}, 成本: {price * size}"
             print(chalk.yellow(message))
