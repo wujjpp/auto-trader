@@ -15,152 +15,122 @@ class QuoteOnline:
         """
         证券代码
         """
-
         self.datetime = ""
         """
         行情时间(包含日期)
         """
-
         self.time = ""
         """
         行情时间
         """
-
         self.price = 0
         """
         最新价格
         """
-
         self.open = 0
         """
         开盘价
         """
-
         self.high = 0
         """
         最高价
         """
-
         self.low = 0
         """
         最低价
         """
-
         self.last_close = 0
         """
         昨收
         """
-
         self.amount = 0
         """
         总成交额
         """
-
         self.volume = 0
         """
         总成交量（股）
         """
-
         self.ask1 = 0
         """
         卖一价
         """
-
         self.ask2 = 0
         """
         卖二价
         """
-
         self.ask3 = 0
         """
         卖三价
         """
-
         self.ask4 = 0
         """
         卖四价
         """
-
         self.ask5 = 0
         """
         卖五价
         """
-
         self.ask_vol1 = 0
         """
         卖一量（股）
         """
-
         self.ask_vol2 = 0
         """
         卖二量（股）
         """
-
         self.ask_vol3 = 0
         """
         卖三量（股）
         """
-
         self.ask_vol4 = 0
         """
         卖四量（股）
         """
-
         self.ask_vol5 = 0
         """
         卖五量（股）
         """
-
         self.bid1 = 0
         """
         买一价
         """
-
         self.bid2 = 0
         """
         买二价
         """
-
         self.bid3 = 0
         """
         买三价
         """
-
         self.bid4 = 0
         """
         买四价
         """
-
         self.bid5 = 0
         """
         买五价
         """
-
         self.bid_vol1 = 0
         """
         买一量（股）
         """
-
         self.bid_vol2 = 0
         """
         买二量（股）
         """
-
         self.bid_vol3 = 0
         """
         买三量（股）
         """
-
         self.bid_vol4 = 0
         """
         买四量（股）
         """
-
         self.bid_vol5 = 0
         """
         买五量（股）
         """
-
         self.stockStatus = 0
         """
         证券状态: 来自官网
@@ -387,12 +357,33 @@ class TemporaryOrder:
 class AccountAsset:
     def __init__(self) -> None:
         self.account_id = ""
+        """
+        账户ID
+        """
         self.account_type = 2
+        """
+        账户类型
+        """
         self.cash = 0
+        """
+        账户现金
+        """
         self.frozen_cash = 0
+        """
+        冻结资金
+        """
         self.market_value = 0
+        """
+        持仓市值
+        """
         self.total_asset = 0
+        """
+        总资产
+        """
         self.account_type_name = ""
+        """
+        账户类型名称
+        """
 
     def print(self) -> None:
         table_data = []
@@ -419,5 +410,5 @@ class AccountAsset:
             acc.total_asset = data.get("total_asset")
             acc.account_type_name = data.get("account_type_name")
             return acc
-        
+
         return None
