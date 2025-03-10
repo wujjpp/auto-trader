@@ -70,6 +70,20 @@ class Context:
         table.title = "委托列表"
         print(table.table)
 
+    def print_candidate_stocks(self) -> None:
+        table_data = []
+        columns = self.candidate_stocks.columns.to_list()
+        table_data.append(columns)
+        for _, item in self.candidate_stocks.iterrows():
+            values = []
+            for c in columns:
+                values.append(item.get(c))
+            table_data.append(values)
+
+        table = AsciiTable(table_data)
+        table.title = "候选列表"
+        print(table.table)
+
     def print_trades(self)-> None:
         table_data = []
         table_data.append(

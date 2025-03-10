@@ -28,6 +28,7 @@ def _restart():
 
 def _print_orders_and_trades():
     context = Context.get_instance()
+    context.print_candidate_stocks()
     context.print_orders()
     context.print_trades()
 
