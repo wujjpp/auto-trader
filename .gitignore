@@ -1,0 +1,14 @@
+venv
+data
+logs
+__pycache__
+.DS_Store
+results
+build
+export/index/download
+node_modules
+Z股票数据
+Z基金数据
+package-lock.json
+ml/data
+recover
