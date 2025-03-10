@@ -6,33 +6,6 @@ import datetime
 import json
 from typing import Dict, Optional
 
-# 原始数据
-# {
-#   'time': 1741570265000,                                时间戳
-#   'lastPrice': 18.26,                                   最新价
-#   'open': 18.37,                                        开盘价
-#   'high': 18.68,                                        最高价
-#   'low': 18.240000000000002,                            最低价
-#   'lastClose': 18.68,                                   前收盘价
-#   'amount': 56091900.0,                                 成交总额
-#   'volume': 30409,                                      成交总量
-#   'pvolume': 3040900,                                   原始成交总量
-#   'stockStatus': 0,                                     证券状态
-#   'openInt': 13,                                        持仓量
-#   'transactionNum': 0,                                  成交笔数
-#   'lastSettlementPrice': 0.0,                           前结算
-#   'settlementPrice': 0.0,
-#   'pe': 0.0,
-#   'askPrice': [18.26, 18.27, 18.28, 18.29, 18.3],       卖一 ~ 卖五
-#   'bidPrice': [18.23, 18.22, 18.21, 18.2, 18.19],       买一 ~ 买五
-#   'askVol': [47, 54, 29, 2, 327],                       卖一量 ~ 卖五量  (手)
-#   'bidVol': [31, 201, 442, 265, 30],                    买一量 ~ 买五量  (手)
-#   'volRatio': 0.0,
-#   'speed1Min': 0.0,
-#   'speed5Min': 0.0
-# }
-
-
 class QuoteOnline:
     def __init__(self):
 
@@ -305,6 +278,39 @@ class Order:
             r[attr] = getattr(self, attr)
 
         return json.dumps(r, ensure_ascii=False, indent=2)
+    
+    @classmethod
+    def load_from_dict(cls, data: Dict) -> Optional["Order"]:
+        if data != None:
+            o = Order()
+            o.account_id = data.get("account_id")
+            o.account_type = data.get("account_type")
+            o.account_type_name = data.get("account_type_name")
+            o.direction = data.get("direction")
+            o.direction_name = data.get("direction_name")
+            o.offset_flag = data.get("offset_flag")
+            o.offset_flag_name = data.get("offset_flag_name")
+            o.order_id = data.get("order_id")
+            o.order_remark = data.get("order_remark")
+            o.order_status = data.get("order_status")
+            o.order_status_name = data.get("order_status_name")
+            o.order_sysid = data.get("order_sysid")
+            o.order_time = data.get("order_time")
+            o.order_type = data.get("order_type")
+            o.order_type_name = data.get("order_type_name")
+            o.order_volume = data.get("order_volume")
+            o.price = data.get("price")
+            o.price_type = data.get("price_type")
+            o.price_type_name = data.get("price_type_name")
+            o.status_msg = data.get("status_msg")
+            o.stock_code = data.get("stock_code")
+            o.strategy_name = data.get("strategy_name")
+            o.traded_price = data.get("traded_price")
+            o.traded_volume = data.get("traded_volume")
+
+            return o
+
+        return None
 
 
 class Trade:
@@ -340,3 +346,31 @@ class Trade:
             r[attr] = getattr(self, attr)
 
         return json.dumps(r, ensure_ascii=False, indent=2)
+
+    @classmethod
+    def load_from_dict(cls, data: Dict) -> Optional["Trade"]:
+        if data != None:
+            o = Trade()
+            o.account_id = data.get("account_id")
+            o.account_type = data.get("account_type")
+            o.account_type_name = data.get("account_type_name")
+            o.direction = data.get("direction")
+            o.direction_name = data.get("direction_name")
+            o.offset_flag = data.get("offset_flag")
+            o.offset_flag_name = data.get("offset_flag_name")
+            o.order_id = data.get("order_id")
+            o.order_remark = data.get("order_remark")
+            o.order_sysid = data.get("order_sysid")
+            o.order_type = data.get("order_type")
+            o.order_type_name = data.get("order_type_name")
+            o.stock_code = data.get("stock_code")
+            o.strategy_name = data.get("strategy_name")
+            o.traded_amount = data.get("traded_amount")
+            o.traded_id = data.get("traded_id")
+            o.traded_price = data.get("traded_price")
+            o.traded_time = data.get("traded_time")
+            o.traded_volume = data.get("traded_volume")
+
+            return o
+
+        return None
