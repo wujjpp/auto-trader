@@ -23,7 +23,7 @@ app_logger = logger.get_app_logger()
 
 def action(quote: Optional[QuoteOnline]) -> None:
     """
-    假如你把持仓也在stocks.csv里面的话，这边可以分流出“买”和“卖”
+    假如你把持仓也在stocks.csv里面，或者直接从QMT里面获取持仓，在订阅里面加入这些标的，这边可以分流出“买”和“卖”逻辑
     """
     buy(quote)
 
@@ -83,7 +83,7 @@ def buy(quote: Optional[QuoteOnline]) -> None:
             #      通过换手率参数来判断要不要继续打板
 
             #   4. XtQuant.XtData 提供很多数据接口，你也可以在这里调用这些模块，https://dict.thinktrader.net/nativeApi/xtdata.html?id=XM8JiS
-            
+
             #   5.  等等，你可以写很多条件在这里，自由发挥，只要有数据，一切皆有可能
 
             ############################################## 定制条件结束 ##############################################
@@ -124,4 +124,7 @@ def buy(quote: Optional[QuoteOnline]) -> None:
         app_logger.error(str(err))
 
 def sell(quote: Optional[QuoteOnline]) -> None:
+    """
+    执行卖出操作
+    """
     pass
