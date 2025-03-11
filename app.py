@@ -31,6 +31,6 @@ backend_job.start()
 # 阻塞主线程，并且提供输入 “p” 打印候选列表、委托单、成交单功能
 while True:
     s = input("")
-    if s == 'p':
+    if s.upper() == 'P':
         print("打印候选列表、委托单、成交单")
         backend_job.print_orders_and_trades()
