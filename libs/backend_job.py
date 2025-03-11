@@ -52,16 +52,16 @@ class BackendJob:
             name=f"【系统】09:00:00 应用自重启",
         )
 
-        # 每隔1分钟打印委托和成交
-        self.scheduler.add_job(
-            self.print_orders_and_trades,
-            trigger="cron",
-            day="*",
-            hour="*",
-            minute="*",
-            second=0,
-            name=f"【系统】每隔1分钟打印委托和成交信息",
-        )
+        # # 每隔1分钟打印委托和成交
+        # self.scheduler.add_job(
+        #     self.print_orders_and_trades,
+        #     trigger="cron",
+        #     day="*",
+        #     hour="*",
+        #     minute="*",
+        #     second=0,
+        #     name=f"【系统】每隔1分钟打印委托和成交信息",
+        # )
 
     def start(self):
         """

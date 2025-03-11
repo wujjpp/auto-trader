@@ -28,7 +28,7 @@ Quote.get_instance().start()
 backend_job = BackendJob.get_instance()
 backend_job.start()
 
-# 阻塞主线程，并且提供输入 “p” 打印候选列表、委托单、成交单功能
+# 阻塞主线程，并且提供在程序运行过程中输入 “p” 打印候选标的列表、委托单、成交单功能
 while True:
     s = input("")
     if s.upper() == 'P':
