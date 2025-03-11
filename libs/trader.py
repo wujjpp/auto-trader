@@ -187,6 +187,8 @@ class Trader:
                     context.print_orders()
                     context.print_trades()
 
+                    self.registed = True
+
                 else:
                     app_logger.error(f"资金账号 {account_id} 交易回调注册失败")
 

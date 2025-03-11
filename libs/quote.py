@@ -46,6 +46,7 @@ class Quote:
         for stock_code in datas:
             data = datas.get(stock_code)
             quote = QuoteOnline.load_from_dict(stock_code, data)
+            self.context.quotes_onine[stock_code] = quote
             strategy.action(quote)
 
     def start(self):

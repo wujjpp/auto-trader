@@ -15,7 +15,8 @@ import pandas as pd
 from simple_chalk import chalk
 from terminaltables3 import AsciiTable
 
-from libs.models import Order, TemporaryOrder, Trade
+from libs import utils
+from libs.models import Order, QuoteOnline, TemporaryOrder, Trade
 
 
 class Context:
@@ -27,6 +28,7 @@ class Context:
         self.orders: List[Order] = []
         self.trades: List[Trade] = []
         self.temp_buy_orders: List[TemporaryOrder] = []
+        self.quotes_onine = {}
 
     def get_candidate_stock_codes(self) -> List[str]:
         return self.candidate_stocks["证券代码"].to_list()
@@ -87,11 +89,27 @@ class Context:
     def print_candidate_stocks(self) -> None:
         table_data = []
         columns = self.candidate_stocks.columns.to_list()
+        columns.append("当前涨幅")
         table_data.append(columns)
         for _, item in self.candidate_stocks.iterrows():
             values = []
             for c in columns:
-                values.append(item.get(c))
+                if c != "当前涨幅":
+                    values.append(item.get(c))
+
+            stock_code = item.get("证券代码")
+            quote: Optional[QuoteOnline] = self.quotes_onine.get(stock_code, None)
+            if quote != None:
+                rise = (quote.price - quote.last_close) * 100 / quote.last_close
+                rise_text = f"{round(rise, 2)}%"
+                values.append(
+                    chalk.red(rise_text)
+                    if rise > 0
+                    else (chalk.green(rise_text) if rise < 0 else rise_text)
+                )
+            else:
+                values.append("-")
+
             table_data.append(values)
 
         table = AsciiTable(table_data)
