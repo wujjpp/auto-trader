@@ -45,3 +45,9 @@ sleep(5)  # 稍微等一下，只是让日志输出更加有序
 Quote.get_instance().start()
 backend_job = BackendJob.get_instance()
 backend_job.start()
+
+while True:
+    s = input("")
+    if s == 'p':
+        print("打印候选列表、委托单、成交单")
+        backend_job.print_orders_and_trades()

@@ -14,7 +14,7 @@ import threading
 from time import sleep
 from typing import Optional
 from pytz import timezone
-from apscheduler.schedulers.blocking import BlockingScheduler
+from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.jobstores.memory import MemoryJobStore
 from apscheduler.executors.pool import ThreadPoolExecutor
 
@@ -23,24 +23,6 @@ import libs.logger as logger
 
 app_logger = logger.get_app_logger()
 
-def _restart():
-    """
-    重新启动自己
-    """
-    seconds = 5
-    while seconds > 0:
-        print(f"{seconds}秒后系统自重启")
-        sleep(1)
-        seconds = seconds - 1
-
-    os.execl(sys.executable, sys.executable, *sys.argv)
-
-def _print_orders_and_trades():
-    app_logger.info("定时打印候选列表、委托单、成交单")
-    context = Context.get_instance()
-    context.print_candidate_stocks()
-    context.print_orders()
-    context.print_trades()
 
 
 class BackendJob:
@@ -52,7 +34,7 @@ class BackendJob:
         job_defaults = {"coalesce": True, "max_instances": 1}
 
         self.executors = {"default": ThreadPoolExecutor(5)}
-        self.scheduler = BlockingScheduler(
+        self.scheduler = BackgroundScheduler(
             jobstores=jobstores,
             executors=self.executors,
             job_defaults=job_defaults,
@@ -61,7 +43,7 @@ class BackendJob:
 
         # 应用自重启
         self.scheduler.add_job(
-            _restart,
+            self.restart,
             trigger="cron",
             day="*",
             hour=9,
@@ -72,7 +54,7 @@ class BackendJob:
 
         # 每隔1分钟打印委托和成交
         self.scheduler.add_job(
-            _print_orders_and_trades,
+            self.print_orders_and_trades,
             trigger="cron",
             day="*",
             hour="*",
@@ -97,6 +79,25 @@ class BackendJob:
                 exec.shutdown(False)
             except:
                 pass
+
+    def print_orders_and_trades(self):
+        app_logger.info("定时打印候选列表、委托单、成交单")
+        context = Context.get_instance()
+        context.print_candidate_stocks()
+        context.print_orders()
+        context.print_trades()
+
+    
+    def restart(self):
+        """
+        重新启动自己
+        """
+        seconds = 5
+        while seconds > 0:
+            print(f"{seconds}秒后系统自重启")
+            sleep(1)
+            seconds = seconds - 1
+        os.execl(sys.executable, sys.executable, *sys.argv)
 
     @classmethod
     def get_instance(cls) -> "BackendJob":
