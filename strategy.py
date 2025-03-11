@@ -84,7 +84,7 @@ def buy(quote: Optional[QuoteOnline]) -> None:
 
             #   4. XtQuant.XtData 提供很多数据接口，你也可以在这里调用这些模块，https://dict.thinktrader.net/nativeApi/xtdata.html?id=XM8JiS
 
-            #   5.  等等，你可以写很多条件在这里，自由发挥，只要有数据，一切皆有可能
+            #   5. 等等，你可以写很多条件在这里，自由发挥，只要有数据，一切皆有可能
 
             ############################ 定制条件结束 ###########################
 
