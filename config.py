@@ -11,6 +11,6 @@ Created by 满仓干 on - 2025/03/10.
 # QMT安装路径 - 根据实际情况自行修改
 QMT_PATH = "C:\\gj_trader\\userdata_mini"
 # 资金账号 - 根据实际情况自行修改
-QMT_ACCOUNT_ID = "8886919696"
+QMT_ACCOUNT_ID = "XXXXXXXXXX"
 # 这个不要修改，固定是STOCK
 QMT_ACCOUNT_TYPE = "STOCK"
