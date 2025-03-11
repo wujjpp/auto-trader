@@ -46,7 +46,7 @@ class Quote:
         for stock_code in datas:
             data = datas.get(stock_code)
             quote = QuoteOnline.load_from_dict(stock_code, data)
-            strategy.buy(quote)
+            strategy.action(quote)
 
     def start(self):
         stock_codes = self.context.get_candidate_stock_codes()

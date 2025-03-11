@@ -21,10 +21,15 @@ import libs.logger as logger
 
 app_logger = logger.get_app_logger()
 
+def action(quote: Optional[QuoteOnline]) -> None:
+    """
+    假如你把持仓也在stocks.csv里面的话，这边可以分流出“买”和“卖”
+    """
+    buy(quote)
 
 def buy(quote: Optional[QuoteOnline]) -> None:
     """
-    执行逻辑
+    执行买入逻辑
     """
 
     try:
@@ -77,7 +82,9 @@ def buy(quote: Optional[QuoteOnline]) -> None:
             #      那么你可以通过 quote.volume * 100 / detailed_info.get("自由流通股本") 计算换手率,
             #      通过换手率参数来判断要不要继续打板
 
-            #   4.  等等，你可以写很多条件在这里，自由发挥，只要有数据，一切皆有可能
+            #   4. XtQuant.XtData 提供很多数据接口，你也可以在这里调用这些模块，https://dict.thinktrader.net/nativeApi/xtdata.html?id=XM8JiS
+            
+            #   5.  等等，你可以写很多条件在这里，自由发挥，只要有数据，一切皆有可能
 
             ############################################## 定制条件结束 ##############################################
 
@@ -115,3 +122,6 @@ def buy(quote: Optional[QuoteOnline]) -> None:
     except Exception as err:
         traceback.print_exc()
         app_logger.error(str(err))
+
+def sell(quote: Optional[QuoteOnline]) -> None:
+    pass
