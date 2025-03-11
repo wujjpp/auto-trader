@@ -70,7 +70,7 @@ def buy(quote: Optional[QuoteOnline]) -> None:
             # 例如:
             #   1. 可以看一下stocks.csv里面的有个栏位叫`5涨`, 那么我们就可以增加一个“5日涨幅大于20%终止打板”的条件
             if detailed_info.get("5涨") > 20:  # type: ignore
-                app_logger.info(f"{stock_code} 5日涨幅大于30%, 终止打板")
+                app_logger.info(f"{stock_code} 5日涨幅大于20%, 终止打板")
                 return
 
             #   2. 例如：增加一个封单金额条件必须大于1000万才进行打板
