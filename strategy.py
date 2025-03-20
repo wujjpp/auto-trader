@@ -44,7 +44,7 @@ def buy(quote: Optional[QuoteOnline]) -> None:
         trader = Trader.get_instance()
         context = Context.get_instance()
 
-        # 看一下是不是，已经下过单的就不再处理了
+        # 看一下是不是已经下过单，下过单的就不再处理了
         if context.is_already_buy(stock_code):
             return
 
@@ -84,7 +84,7 @@ def buy(quote: Optional[QuoteOnline]) -> None:
 
             #   4. XtQuant.XtData 提供很多数据接口，你也可以在这里调用这些模块，https://dict.thinktrader.net/nativeApi/xtdata.html?id=XM8JiS
 
-            #   5. 等等，你可以写很多条件在这里，自由发挥，只要有数据，一切皆有可能
+            #   5. 你可以写很多条件在这里，自由发挥，只要有数据，一切皆有可能
 
             ############################ 定制条件结束 ###########################
 
@@ -96,7 +96,7 @@ def buy(quote: Optional[QuoteOnline]) -> None:
 
             # 你可以在这里通过account_info.cash来计算可买入的手数
             # 比如: 剩余资金的 1/4 对该标的进行打板，那么: size = int(account_info.cash / 4 / (price * 100)) * 100
-            # 想这么玩，你自己看着办，但这里仅仅是用于测试，就写死了一手即100股
+            # 想这么玩，你自己看着办，但这里仅仅是用于测试，就写死了100股，即一手
             size = 100
 
             # 检查账户剩余现金在该价格上是不是能买入指定size
