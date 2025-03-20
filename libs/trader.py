@@ -71,7 +71,7 @@ class TraderCallback(XtQuantTraderCallback):
         print(f"\n------------------ on_stock_order ------------------")
         trade_logger.info(f"{shared.json_dumps(order)}")
         print(f"----------------------------------------------------\n")
-        Context.get_instance().orders.append(order)  # type: ignore
+        Context.get_instance().orders.append(Order.load_from_dict(order))  # type: ignore
 
     def on_stock_trade(self, trade):
         # 1. prepare data
@@ -83,7 +83,7 @@ class TraderCallback(XtQuantTraderCallback):
         print(f"\n------------------ on_stock_trade ------------------")
         trade_logger.info(f"{shared.json_dumps(trade)}")
         print(f"----------------------------------------------------\n")
-        Context.get_instance().trades.append(trade)  # type: ignore
+        Context.get_instance().trades.append(Trade.load_from_dict(trade))  # type: ignore
 
     def on_stock_position(self, position):
         # 1. prepare data

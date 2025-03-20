@@ -15,7 +15,6 @@ import pandas as pd
 from simple_chalk import chalk
 from terminaltables3 import AsciiTable
 
-from libs import utils
 from libs.models import Order, QuoteOnline, TemporaryOrder, Trade
 
 
